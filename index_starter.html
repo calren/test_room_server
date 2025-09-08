@@ -56,14 +56,8 @@
         let players = {};
         const playerSize = 50;
 
-        // A simple sprite map for different player appearances
-        const sprites = {
-            'warrior': '🤺',
-            'mage': '🧙',
-            'archer': '🏹',
-            'healer': '🧑‍⚕️',
-            'default': '😀'
-        };
+        // Sprites will be received from the server
+        let sprites = {};
 
         // Function to draw the game world
         function draw() {
@@ -91,12 +85,8 @@
             statusDiv.textContent = 'Connected! Joining the world...';
             console.log('Connected to the server');
 
-            // Join the game with a random sprite
-            const spriteKeys = Object.keys(sprites);
-            const randomSprite = spriteKeys[Math.floor(Math.random() * spriteKeys.length)];
-
-            // TODO 1: When the websocket opens, send a request to join the world with a defined sprite of your choice
-            ws.send(JSON.stringify({ type: 'player_join', sprite: randomSprite, username: 'caren'}));
+            // Request sprites from server first
+            ws.send(JSON.stringify({ type: 'request_sprites' }));
         };
 
         // Handle incoming messages from the server
@@ -104,6 +94,13 @@
             const data = JSON.parse(event.data);
 
             switch (data.type) {
+                case 'sprites_response':
+                    sprites = data.sprites;
+                    // Now join the game with a random sprite
+                    const spriteKeys = Object.keys(sprites);
+                    const randomSprite = spriteKeys[Math.floor(Math.random() * spriteKeys.length)];
+                    ws.send(JSON.stringify({ type: 'player_join', sprite: randomSprite, username: 'caren'}));
+                    break;
                 case 'world_state':
                     players = data.players;
                     statusDiv.textContent = `World joined! Players online: ${Object.keys(players).length}`;

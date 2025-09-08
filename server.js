@@ -14,6 +14,61 @@ const world = {
     height: 600
 };
 
+// A simple sprite map for different player appearances
+const sprites = {
+    'warrior': '🤺',
+    'mage': '🧙',
+    'archer': '🏹',
+    'healer': '🧑‍⚕️',
+    'coffee': '☕',
+    'pizza': '🍕',
+    'burger': '🍔',
+    'sushi': '🍣',
+    'ramen': '🍜',
+    'pasta': '🍝',
+    'salad': '🥗',
+    'ice cream': '🍦',
+    'chocolate': '🍫',
+    'cake': '🍰',
+    'pie': '🥧',
+    'cookie': '🍪',
+    'donut': '🍩',
+    'popsicle': '🍧',
+    'dog': '🐕',
+    'turtle': '🐢',
+    'fish': '🐟',
+    'bird': '🐦',
+    'cat': '🐱',
+    'rabbit': '🐰',
+    'snake': '🐍',
+    'tiger': '🐯',
+    'lion': '🦁',
+    'zebra': '🦓',
+    'giraffe': '🦒',
+    'elephant': '🐘',
+    'monkey': '🐒',
+    'panda': '🐼',
+    'koala': '🐨',
+    'kangaroo': '🦘',
+    'penguin': '🐧',
+    't-rex': '🦖',
+    'dinosaur': '🦕',
+    'dragon': '🐉',
+    'unicorn': '🦄',
+    'rainbow': '🌈',
+    'star': '⭐',
+    'moon': '🌙',
+    'sun': '🌞',
+    'cloud': '☁️',
+    'snowflake': '❄️',
+    'snowman': '⛄',
+    'fire': '🔥',
+    'heart': '❤️',
+    'broken heart': '💔',
+    'diamond': '💎',
+    'default': '😀'
+};
+
 // Define the file path for persistence
 const PLAYERS_FILE = 'players.json'; // <--- ADD THIS LINE
 
@@ -70,20 +125,21 @@ wss.on('connection', ws => {
 
             // Process different types of messages from the client
             switch (data.type) {
+                // When a client requests sprites
+                case 'request_sprites':
+                    ws.send(JSON.stringify({ type: 'sprites_response', sprites }));
+                    break;
                 // When a player joins the game
                 case 'player_join':
                     // If player already exists (reconnecting), use their old data
                     if (!players[playerId]) {
                          players[playerId] = {
                             id: playerId,
-                            username: data.username || 'Anonymous', // Use provided username or default
                             x: Math.floor(Math.random() * (world.width - 50)),
                             y: Math.floor(Math.random() * (world.height - 50)),
                             sprite: data.sprite || 'default', // Use a default sprite if none is provided
                         };
-                        console.log(`Player ${data.username || 'Anonymous'} (${playerId}) joined the world at (${players[playerId].x}, ${players[playerId].y}).`);
-                        // Save the state after a new player joins
-                        saveState();
+                        console.log(`Player ${playerId} joined the world at (${players[playerId].x}, ${players[playerId].y}).`);
                     }
                     
                     // Send the current state of all players to the newly connected client
