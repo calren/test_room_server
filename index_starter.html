@@ -51,19 +51,11 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const statusDiv = document.getElementById('status');
-        const ws = new WebSocket('ws://localhost:8080');
+
+        const ws = new WebSocket('TODO');
 
         let players = {};
         const playerSize = 50;
-
-        // A simple sprite map for different player appearances
-        const sprites = {
-            'warrior': '🤺',
-            'mage': '🧙',
-            'archer': '🏹',
-            'healer': '🧑‍⚕️',
-            'default': '😀'
-        };
 
         // Function to draw the game world
         function draw() {
@@ -85,19 +77,6 @@
                 ctx.fillText(player.username || id, player.x + playerSize / 2, player.y + playerSize + 10);
             }
         }
-
-        // Handle WebSocket connection opening
-        ws.onopen = () => {
-            statusDiv.textContent = 'Connected! Joining the world...';
-            console.log('Connected to the server');
-
-            // Join the game with a random sprite
-            const spriteKeys = Object.keys(sprites);
-            const randomSprite = spriteKeys[Math.floor(Math.random() * spriteKeys.length)];
-
-            // TODO 1: When the websocket opens, send a request to join the world with a defined sprite of your choice
-            ws.send(JSON.stringify({ type: 'player_join', sprite: randomSprite, username: 'caren'}));
-        };
 
         // Handle incoming messages from the server
         ws.onmessage = event => {
