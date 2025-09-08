@@ -119,6 +119,30 @@
             console.error('WebSocket Error:', error);
         };
 
+        // TODO: Handle keyboard input for movement up. down, left, right
+        document.addEventListener('keydown', e => {
+            let direction = null;
+            switch (e.key) {
+                case 'ArrowUp':
+                    direction = 'up';
+                    break;
+                case 'ArrowDown':
+                    direction = 'down';
+                    break;
+                case 'ArrowLeft':
+                    direction = 'left';
+                    break;
+                case 'ArrowRight':
+                    direction = 'right';
+                    break;
+            }
+            if (direction) {
+                // Prevent default browser action for arrow keys (like scrolling)
+                e.preventDefault();
+                // Send the move command to the server
+                ws.send(JSON.stringify({ type: 'player_move', direction }));
+            }
+        });
     </script>
 
 </body>
